@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDT / ZULU Clock</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0e17;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .wrapper {
+    background: #0d1220;
+    border: 1px solid #1e2d45;
+    border-radius: 6px;
+    padding: 28px 40px 36px 40px;
+    box-shadow: 0 0 60px rgba(0,180,255,0.08), inset 0 0 60px rgba(0,0,0,0.4);
+    position: relative;
+    min-width: 300px;
+  }
+
+  .wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(90deg, transparent, #00b4ff, transparent);
+  }
+
+  .wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 0 0 6px 6px;
+    background: linear-gradient(90deg, transparent, #ff9500, transparent);
+  }
+
+  .clock-block {
+    padding: 20px 0;
+  }
+
+  .clock-block + .clock-block {
+    border-top: 1px solid #1a2535;
+    margin-top: 14px;
+  }
+
+  .label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #00b4ff;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.9;
+  }
+
+  .time {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 48px;
+    color: #e8f4ff;
+    letter-spacing: 3px;
+    line-height: 1;
+    text-shadow: 0 0 24px rgba(0,180,255,0.35);
+  }
+
+  .zulu .label {
+    color: #ff9500;
+  }
+
+  .zulu .time {
+    text-shadow: 0 0 24px rgba(255,149,0,0.35);
+  }
+
+  .date {
+    font-size: 11px;
+    color: #3a5070;
+    margin-top: 6px;
+    letter-spacing: 2px;
+  }
+
+  .zulu .date {
+    color: #5a4020;
+  }
+
+  /* scanline overlay */
+  .scan {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.04) 2px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+    border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="scan"></div>
+
+  <div class="clock-block cdt">
+    <div class="label">Central Daylight Time</div>
+    <div class="time" id="cdt-time">--:--:--</div>
+    <div class="date" id="cdt-date"></div>
+  </div>
+
+  <div class="clock-block zulu">
+    <div class="label">Zulu &nbsp;/&nbsp; UTC</div>
+    <div class="time" id="zulu-time">--:--:--</div>
+    <div class="date" id="zulu-date"></div>
+  </div>
+</div>
+
+<script>
+  function formatTime(date, tz) {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).format(date);
+  }
+
+  function formatDate(date, tz) {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit'
+    }).format(date).toUpperCase();
+  }
+
+  function tick() {
+    const now = new Date();
+    document.getElementById('cdt-time').textContent = formatTime(now, 'America/Chicago');
+    document.getElementById('cdt-date').textContent = formatDate(now, 'America/Chicago');
+    document.getElementById('zulu-time').textContent = formatTime(now, 'UTC');
+    document.getElementById('zulu-date').textContent = formatDate(now, 'UTC') + ' Z';
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
